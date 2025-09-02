@@ -90,6 +90,16 @@ P.S. You can delete this when you're done too. It's your config now! :)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
+-- Allow clipboard copy paste in neovim
+vim.g.neovide_input_use_logo = 1
+vim.api.nvim_set_keymap('', '<D-v>', '+p<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('!', '<D-v>', '<C-R>+', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('t', '<D-v>', '<C-R>+', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('v', '<D-v>', '<C-R>+', { noremap = true, silent = true })
+
+-- AugmentCode workspace
+vim.g.augment_workspace_folders = { '/Users/jasonharris/Documents/lichoin/Attack-Path-Recommendation-System' }
+
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = false
 
@@ -98,6 +108,10 @@ vim.g.have_nerd_font = false
 -- NOTE: You can change these options as you wish!
 --  For more options, you can see `:help option-list`
 
+-- https://github.com/rmagatti/auto-session?tab=readme-ov-file#recommended-sessionoptions-config
+vim.o.sessionoptions = 'blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions'
+-- Set zsh shell
+vim.o.shell = 'zsh'
 -- Make line numbers default
 vim.o.number = true
 -- You can also add relative line numbers, to help with jumping.
@@ -220,6 +234,16 @@ vim.api.nvim_create_autocmd('TextYankPost', {
     vim.hl.on_yank()
   end,
 })
+
+-- Fix neovide paste problem
+if vim.g.neovide then
+  vim.api.nvim_set_keymap('v', '<sc-c>', '"+y', { noremap = true })
+  vim.api.nvim_set_keymap('n', '<sc-v>', 'l"+P', { noremap = true })
+  vim.api.nvim_set_keymap('v', '<sc-v>', '"+P', { noremap = true })
+  vim.api.nvim_set_keymap('c', '<sc-v>', '<C-o>l<C-o>"+<C-o>P<C-o>l', { noremap = true })
+  vim.api.nvim_set_keymap('i', '<sc-v>', '<ESC>l"+Pli', { noremap = true })
+  vim.api.nvim_set_keymap('t', '<sc-v>', '<C-\\><C-n>"+Pi', { noremap = true })
+end
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
@@ -419,12 +443,21 @@ require('lazy').setup({
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
           },
+          project = {
+            base_dirs = {
+              '~/workspace',
+              '~/Documents/lichoin/',
+            },
+            hidden_files = true, -- Show hidden files in project list
+            theme = 'dropdown',
+          },
         },
       }
 
       -- Enable Telescope extensions if they are installed
       pcall(require('telescope').load_extension, 'fzf')
       pcall(require('telescope').load_extension, 'ui-select')
+      pcall(require('telescope').load_extension, 'project')
 
       -- See `:help telescope.builtin`
       local builtin = require 'telescope.builtin'
@@ -438,7 +471,7 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
       vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
-
+      vim.keymap.set('n', '<leader>sp', '<cmd>Telescope project<cr>', { desc = 'Switch Projects' })
       -- Slightly advanced example of overriding default behavior and theme
       vim.keymap.set('n', '<leader>/', function()
         -- You can pass additional configuration to Telescope to change the theme, layout, etc.
@@ -877,6 +910,17 @@ require('lazy').setup({
     },
   },
 
+  {
+    'NLKNguyen/papercolor-theme',
+    priority = 1001,
+    config = function()
+      -- Load the colorscheme here
+      vim.cmd.colorscheme 'papercolor'
+
+      -- You can configure parts of the theme here, for example:
+      -- vim.g.papercolor_use_low_contrast_for_ui = true
+    end,
+  },
   { -- You can easily change to a different colorscheme.
     -- Change the name of the colorscheme plugin below, and then
     -- change the command in the config to whatever the name of that colorscheme is.
@@ -986,7 +1030,9 @@ require('lazy').setup({
   --    This is the easiest way to modularize your config.
   --
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
-  -- { import = 'custom.plugins' },
+  { import = 'custom.plugins' },
+
+  -- require 'custom.plugins.auto-session',
   --
   -- For additional information with loading, sourcing and examples see `:help lazy.nvim-🔌-plugin-spec`
   -- Or use telescope!
