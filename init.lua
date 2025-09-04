@@ -112,7 +112,7 @@ vim.g.have_nerd_font = false
 vim.o.autowriteall = true
 
 -- https://github.com/rmagatti/auto-session?tab=readme-ov-file#recommended-sessionoptions-config
-vim.o.sessionoptions = 'blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions'
+-- vim.o.sessionoptions = 'blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions'
 -- Set zsh shell
 vim.o.shell = 'zsh'
 -- Make line numbers default
@@ -199,6 +199,19 @@ vim.g.neovide_scale_factor = 0.9
 --     vim.g.neovide_scale_factor = vim.g.neovide_scale_factor - 0.1
 --   end, { desc = 'Zoom Out' })
 -- end
+
+-- Refactoring keymaps
+vim.keymap.set('x', '<leader>re', ':Refactor extract ')
+vim.keymap.set('x', '<leader>rf', ':Refactor extract_to_file ')
+
+vim.keymap.set('x', '<leader>rv', ':Refactor extract_var ')
+
+vim.keymap.set({ 'n', 'x' }, '<leader>ri', ':Refactor inline_var')
+
+vim.keymap.set('n', '<leader>rI', ':Refactor inline_func')
+
+vim.keymap.set('n', '<leader>rb', ':Refactor extract_block')
+vim.keymap.set('n', '<leader>rbf', ':Refactor extract_block_to_file')
 
 -- Clear highlights on search when pressing <Esc> in normal mode
 --  See `:help hlsearch`
@@ -468,6 +481,7 @@ require('lazy').setup({
             hidden_files = true, -- Show hidden files in project list
             theme = 'dropdown',
           },
+          -- refactoring = {},
         },
       }
 
@@ -475,6 +489,7 @@ require('lazy').setup({
       pcall(require('telescope').load_extension, 'fzf')
       pcall(require('telescope').load_extension, 'ui-select')
       pcall(require('telescope').load_extension, 'project')
+      -- pcall(require('telescope').load_extension, 'refactoring')
 
       -- See `:help telescope.builtin`
       local builtin = require 'telescope.builtin'
@@ -998,11 +1013,23 @@ require('lazy').setup({
 
       -- ... and there is more!
       --  Check out: https://github.com/echasnovski/mini.nvim
+      -- mini session
+      require('mini.sessions').setup {
+        -- barbar integration: https://github.com/romgrk/barbar.nvim?tab=readme-ov-file#mininvim
+        hooks = {
+          pre = {
+            write = function()
+              vim.api.nvim_exec_autocmds('User', { pattern = 'SessionSavePre' })
+            end,
+          },
+        },
+      }
     end,
   },
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
+    run = ':TSUpdate',
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
