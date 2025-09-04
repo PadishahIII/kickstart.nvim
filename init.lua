@@ -108,6 +108,9 @@ vim.g.have_nerd_font = false
 -- NOTE: You can change these options as you wish!
 --  For more options, you can see `:help option-list`
 
+-- Auto-save
+vim.o.autowriteall = true
+
 -- https://github.com/rmagatti/auto-session?tab=readme-ov-file#recommended-sessionoptions-config
 vim.o.sessionoptions = 'blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions'
 -- Set zsh shell
@@ -182,6 +185,20 @@ vim.o.confirm = true
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
+
+-- Neovide zoom in/out
+vim.g.neovide_scale_factor = 0.9
+-- if vim.g.neovide then
+--   -- Zoom In: Cmd + Opt + = (or +)
+--   vim.keymap.set('n', '<D-M-S-=>', function()
+--     vim.g.neovide_scale_factor = vim.g.neovide_scale_factor + 0.1
+--   end, { desc = 'Zoom In' })
+--
+--   -- Zoom Out: Cmd + Opt + -
+--   vim.keymap.set('n', '<D-M-S-->', function()
+--     vim.g.neovide_scale_factor = vim.g.neovide_scale_factor - 0.1
+--   end, { desc = 'Zoom Out' })
+-- end
 
 -- Clear highlights on search when pressing <Esc> in normal mode
 --  See `:help hlsearch`
