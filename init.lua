@@ -1015,6 +1015,8 @@ require('lazy').setup({
       --  Check out: https://github.com/echasnovski/mini.nvim
       -- mini session
       require('mini.sessions').setup {
+        autowrite = true,
+        file = 'Session.vim',
         -- barbar integration: https://github.com/romgrk/barbar.nvim?tab=readme-ov-file#mininvim
         hooks = {
           pre = {
@@ -1063,7 +1065,7 @@ require('lazy').setup({
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
 
-  require 'kickstart.plugins.neo-tree',
+  -- require 'kickstart.plugins.neo-tree',
   require 'kickstart.plugins.debug',
   require 'kickstart.plugins.indent_line',
   require 'kickstart.plugins.lint',
