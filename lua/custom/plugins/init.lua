@@ -832,4 +832,10 @@ return {
       })
     end,
   },
+  {
+    'Mofiqul/vscode.nvim',
+    config = function()
+      vim.o.background = 'dark'
+    end,
+  },
 }
