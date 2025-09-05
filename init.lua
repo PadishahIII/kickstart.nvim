@@ -108,8 +108,11 @@ vim.g.have_nerd_font = false
 -- NOTE: You can change these options as you wish!
 --  For more options, you can see `:help option-list`
 
+-- Auto-save
+vim.o.autowriteall = true
+
 -- https://github.com/rmagatti/auto-session?tab=readme-ov-file#recommended-sessionoptions-config
-vim.o.sessionoptions = 'blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions'
+-- vim.o.sessionoptions = 'blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions'
 -- Set zsh shell
 vim.o.shell = 'zsh'
 -- Make line numbers default
@@ -182,6 +185,33 @@ vim.o.confirm = true
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
+
+-- Neovide zoom in/out
+vim.g.neovide_scale_factor = 0.9
+-- if vim.g.neovide then
+--   -- Zoom In: Cmd + Opt + = (or +)
+--   vim.keymap.set('n', '<D-M-S-=>', function()
+--     vim.g.neovide_scale_factor = vim.g.neovide_scale_factor + 0.1
+--   end, { desc = 'Zoom In' })
+--
+--   -- Zoom Out: Cmd + Opt + -
+--   vim.keymap.set('n', '<D-M-S-->', function()
+--     vim.g.neovide_scale_factor = vim.g.neovide_scale_factor - 0.1
+--   end, { desc = 'Zoom Out' })
+-- end
+
+-- Refactoring keymaps
+vim.keymap.set('x', '<leader>re', ':Refactor extract ')
+vim.keymap.set('x', '<leader>rf', ':Refactor extract_to_file ')
+
+vim.keymap.set('x', '<leader>rv', ':Refactor extract_var ')
+
+vim.keymap.set({ 'n', 'x' }, '<leader>ri', ':Refactor inline_var')
+
+vim.keymap.set('n', '<leader>rI', ':Refactor inline_func')
+
+vim.keymap.set('n', '<leader>rb', ':Refactor extract_block')
+vim.keymap.set('n', '<leader>rbf', ':Refactor extract_block_to_file')
 
 -- Clear highlights on search when pressing <Esc> in normal mode
 --  See `:help hlsearch`
@@ -451,6 +481,7 @@ require('lazy').setup({
             hidden_files = true, -- Show hidden files in project list
             theme = 'dropdown',
           },
+          -- refactoring = {},
         },
       }
 
@@ -458,6 +489,7 @@ require('lazy').setup({
       pcall(require('telescope').load_extension, 'fzf')
       pcall(require('telescope').load_extension, 'ui-select')
       pcall(require('telescope').load_extension, 'project')
+      -- pcall(require('telescope').load_extension, 'refactoring')
 
       -- See `:help telescope.builtin`
       local builtin = require 'telescope.builtin'
@@ -981,11 +1013,25 @@ require('lazy').setup({
 
       -- ... and there is more!
       --  Check out: https://github.com/echasnovski/mini.nvim
+      -- mini session
+      require('mini.sessions').setup {
+        autowrite = true,
+        file = 'Session.vim',
+        -- barbar integration: https://github.com/romgrk/barbar.nvim?tab=readme-ov-file#mininvim
+        hooks = {
+          pre = {
+            write = function()
+              vim.api.nvim_exec_autocmds('User', { pattern = 'SessionSavePre' })
+            end,
+          },
+        },
+      }
     end,
   },
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
+    run = ':TSUpdate',
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
@@ -1019,7 +1065,7 @@ require('lazy').setup({
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
 
-  require 'kickstart.plugins.neo-tree',
+  -- require 'kickstart.plugins.neo-tree',
   require 'kickstart.plugins.debug',
   require 'kickstart.plugins.indent_line',
   require 'kickstart.plugins.lint',
