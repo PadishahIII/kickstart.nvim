@@ -14,7 +14,8 @@ else
   set shortmess=aoO
 endif
 badd +1110 ~/.config/nvim/init.lua
-badd +839 lua/custom/plugins/init.lua
+badd +877 lua/custom/plugins/init.lua
+badd +1 ./
 argglobal
 %argdel
 $argadd ./
@@ -31,12 +32,12 @@ setlocal foldnestmax=20
 setlocal foldenable
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 839 - ((44 * winheight(0) + 26) / 52)
+let s:l = 866 - ((38 * winheight(0) + 26) / 52)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 839
-normal! 05|
+keepjumps 866
+normal! 02|
 tabnext 1
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0 && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'
   silent exe 'bwipe ' . s:wipebuf
