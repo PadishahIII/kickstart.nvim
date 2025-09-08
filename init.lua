@@ -948,7 +948,7 @@ require('lazy').setup({
     priority = 1001,
     config = function()
       -- Load the colorscheme here
-      vim.cmd.colorscheme 'papercolor'
+      vim.cmd.colorscheme 'PaperColor'
 
       -- You can configure parts of the theme here, for example:
       -- vim.g.papercolor_use_low_contrast_for_ui = true
