@@ -97,8 +97,8 @@ vim.api.nvim_set_keymap('!', '<D-v>', '<C-R>+', { noremap = true, silent = true 
 vim.api.nvim_set_keymap('t', '<D-v>', '<C-R>+', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('v', '<D-v>', '<C-R>+', { noremap = true, silent = true })
 
--- AugmentCode workspace
-vim.g.augment_workspace_folders = { '/Users/jasonharris/Documents/lichoin/Attack-Path-Recommendation-System' }
+-- TODO: AugmentCode workspace
+-- vim.g.augment_workspace_folders = { '/Users/jasonharris/Documents/lichoin/Attack-Path-Recommendation-System' }
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = false
@@ -473,10 +473,11 @@ require('lazy').setup({
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
           },
+          -- TODO: specify project location
           project = {
             base_dirs = {
-              '~/workspace',
-              '~/Documents/lichoin/',
+              -- '~/workspace',
+              -- '~/Documents/lichoin/',
             },
             hidden_files = true, -- Show hidden files in project list
             theme = 'dropdown',

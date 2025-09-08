@@ -14,12 +14,19 @@ else
   set shortmess=aoO
 endif
 badd +1110 ~/.config/nvim/init.lua
-badd +877 lua/custom/plugins/init.lua
+badd +852 lua/custom/plugins/init.lua
 badd +1 ./
 argglobal
 %argdel
 $argadd ./
 edit lua/custom/plugins/init.lua
+wincmd t
+let s:save_winminheight = &winminheight
+let s:save_winminwidth = &winminwidth
+set winminheight=0
+set winheight=1
+set winminwidth=0
+set winwidth=1
 argglobal
 balt ~/.config/nvim/init.lua
 setlocal foldmethod=manual
@@ -32,12 +39,12 @@ setlocal foldnestmax=20
 setlocal foldenable
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 866 - ((38 * winheight(0) + 26) / 52)
+let s:l = 852 - ((19 * winheight(0) + 23) / 47)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 866
-normal! 02|
+keepjumps 852
+normal! 03|
 tabnext 1
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0 && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'
   silent exe 'bwipe ' . s:wipebuf
@@ -45,6 +52,8 @@ endif
 unlet! s:wipebuf
 set winheight=1 winwidth=20
 let &shortmess = s:shortmess_save
+let &winminheight = s:save_winminheight
+let &winminwidth = s:save_winminwidth
 let s:sx = expand("<sfile>:p:r")."x.vim"
 if filereadable(s:sx)
   exe "source " . fnameescape(s:sx)
