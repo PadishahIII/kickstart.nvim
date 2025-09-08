@@ -1,8 +1,8 @@
 #!/bin/bash
-sudo apt-get -y install neovim
-sudo apt-get -y install ripgrep
-sudo apt-get -y install fd
-# git clone https://github.com/ryanoasis/nerd-fonts.git
-# cd nerd-fonts || exit
-# ./install.sh Hack
+# Prerequisite:
+# - Homebrew installed
+
+brew install neovim
+brew install ripgrep
+brew install fd
 brew install --cask font-hack-nerd-font
