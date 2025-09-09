@@ -200,6 +200,18 @@ vim.g.neovide_scale_factor = 0.9
 --   end, { desc = 'Zoom Out' })
 -- end
 
+-- bookmark https://github.com/LintaoAmons/bookmarks.nvim?tab=readme-ov-file#keymap
+-- vim.keymap.set({ 'n', 'v' }, 'mm', '<cmd>BookmarksMark<cr>', { desc = 'Mark current line into active BookmarkList.' })
+-- vim.keymap.set({ 'n', 'v' }, 'mo', '<cmd>BookmarksGoto<cr>', { desc = 'Go to bookmark at current active BookmarkList' })
+-- vim.keymap.set({ 'n', 'v' }, 'ma', '<cmd>BookmarksCommands<cr>', { desc = 'Find and trigger a bookmark command.' })
+
+-- Terminal
+vim.keymap.set('n', '<leader>tl', '<cmd>ToggleTermSendCurrentLine<cr>', { desc = 'Send current line to ToggleTerm (terminal 1)' })
+vim.keymap.set('n', '<leader>tl1', '<cmd>ToggleTermSendCurrentLine 1<cr>', { desc = 'Send current line to ToggleTerm (terminal 1)' })
+vim.keymap.set('n', '<leader>tl2', '<cmd>ToggleTermSendCurrentLine 2<cr>', { desc = 'Send current line to ToggleTerm (terminal 2)' })
+vim.keymap.set('n', '<leader>tl3', '<cmd>ToggleTermSendCurrentLine 3<cr>', { desc = 'Send current line to ToggleTerm (terminal 3)' })
+vim.keymap.set('n', '<leader>tl4', '<cmd>ToggleTermSendCurrentLine 4<cr>', { desc = 'Send current line to ToggleTerm (terminal 4)' })
+
 -- Refactoring keymaps
 vim.keymap.set('x', '<leader>re', ':Refactor extract ')
 vim.keymap.set('x', '<leader>rf', ':Refactor extract_to_file ')
@@ -948,7 +960,7 @@ require('lazy').setup({
     priority = 1001,
     config = function()
       -- Load the colorscheme here
-      vim.cmd.colorscheme 'PaperColor'
+      -- vim.cmd.colorscheme 'PaperColor'
 
       -- You can configure parts of the theme here, for example:
       -- vim.g.papercolor_use_low_contrast_for_ui = true
@@ -972,7 +984,7 @@ require('lazy').setup({
       -- Load the colorscheme here.
       -- Like many other themes, this one has different styles, and you could load
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'lunaperche'
+      -- vim.cmd.colorscheme 'lunaperche'
     end,
   },
 

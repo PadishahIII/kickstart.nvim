@@ -10,6 +10,8 @@ brew install ripgrep
 brew install fd
 brew install --cask font-hack-nerd-font
 brew install lazygit
+brew install --cask gg
+brew install gnu-sed
 
 # Python LSP
 # pip install pyright

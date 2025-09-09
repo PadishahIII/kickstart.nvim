@@ -53,6 +53,34 @@ return {
           vim.keymap.set('n', '{', '<cmd>AerialPrev<CR>', { buffer = bufnr, silent = true, desc = 'Prev symbol' })
           vim.keymap.set('n', '}', '<cmd>AerialNext<CR>', { buffer = bufnr, silent = true, desc = 'Next symbol' })
         end,
+        filter_kind = {
+          -- 'Array',
+          -- 'Boolean',
+          'Class',
+          'Constant',
+          'Constructor',
+          'Enum',
+          -- 'EnumMember',
+          -- 'Event',
+          -- 'Field',
+          -- 'File',
+          'Function',
+          'Interface',
+          -- 'Key',
+          'Method',
+          'Module',
+          'Namespace',
+          -- 'Null',
+          -- 'Number',
+          -- 'Object',
+          -- 'Operator',
+          -- 'Package',
+          -- 'Property',
+          -- 'String',
+          'Struct',
+          -- 'TypeParameter',
+          -- 'Variable',
+        },
       }
 
       -- You can set your global keymap to toggle aerial here
@@ -273,7 +301,7 @@ return {
           {
             pane = 2,
             section = 'terminal',
-            cmd = 'colorscript -e square',
+            -- cmd = 'colorscript -e square',
             height = 5,
             padding = 1,
           },
@@ -297,14 +325,20 @@ return {
           { section = 'startup' },
         },
       },
-      explorer = { enabled = true, focus = 'input', auto_close = false },
+      explorer = { enabled = true, focus = 'input', auto_close = false, files = {
+        hidden = true,
+        ignored = true,
+      } },
       indent = { enabled = true },
       input = { enabled = true },
       notifier = {
         enabled = true,
         timeout = 3000,
       },
-      picker = { enabled = true },
+      picker = { enabled = true, files = {
+        hidden = true,
+        ignored = true,
+      } },
       quickfile = { enabled = true },
       scope = { enabled = true },
       scroll = { enabled = true },
@@ -836,6 +870,7 @@ return {
     'Mofiqul/vscode.nvim',
     config = function()
       vim.o.background = 'dark'
+      vim.cmd.colorscheme 'vscode'
     end,
   },
   -- {
@@ -876,4 +911,152 @@ return {
   --     }
   --   end,
   -- },
+  -- NOTE: auto-import
+  -- {
+  --   'alexpasmantier/pymple.nvim',
+  --   dependencies = {
+  --     'nvim-lua/plenary.nvim',
+  --     'MunifTanjim/nui.nvim',
+  --     -- optional (nicer ui)
+  --     'stevearc/dressing.nvim',
+  --     'nvim-tree/nvim-web-devicons',
+  --   },
+  --   build = ':PympleBuild',
+  --   config = function()
+  --     require('pymple').setup()
+  --   end,
+  --   -- automatically register the following keymaps on plugin setup
+  --   keymaps = {
+  --     -- Resolves import for symbol under cursor.
+  --     -- This will automatically find and add the corresponding import to
+  --     -- the top of the file (below any existing doctsring)
+  --     resolve_import_under_cursor = {
+  --       desc = 'Resolve import under cursor',
+  --       keys = '<leader>li', -- feel free to change this to whatever you like
+  --     },
+  --   },
+  -- },
+  -- {
+  --   'LintaoAmons/bookmarks.nvim',
+  --   -- pin the plugin at specific version for stability
+  --   -- backup your bookmark sqlite db when there are breaking changes (major version change)
+  --   tag = '3.2.0',
+  --   dependencies = {
+  --     { 'kkharji/sqlite.lua' },
+  --     { 'nvim-telescope/telescope.nvim' }, -- currently has only telescopes supported, but PRs for other pickers are welcome
+  --     { 'stevearc/dressing.nvim' }, -- optional: better UI
+  --     { 'GeorgesAlkhouri/nvim-aider' }, -- optional: for Aider integration
+  --   },
+  --   config = function()
+  --     local opts = {} -- check the "./lua/bookmarks/default-config.lua" file for all the options
+  --     require('bookmarks').setup(opts) -- you must call setup to init sqlite db
+  --   end,
+  -- },
+  {
+    'linux-cultist/venv-selector.nvim',
+    enabled = false,
+    dependencies = {
+      'neovim/nvim-lspconfig',
+      -- { 'nvim-telescope/telescope.nvim', branch = '0.1.x', dependencies = { 'nvim-lua/plenary.nvim' } }, -- optional: you can also use fzf-lua, snacks, mini-pick instead.
+      'mfussenegger/nvim-dap',
+      'mfussenegger/nvim-dap-python', -- Important for DAP integration
+      { 'folke/snacks.nvim' },
+    },
+    ft = 'python', -- Load when opening Python files
+    keys = {
+      { 'vs', '<cmd>VenvSelect<cr>' }, -- Open picker on keymap
+    },
+    opts = { -- this can be an empty lua table - just showing below for clarity.
+      search = {
+        mac_conda = {
+          command = "fd --full-path '/bin/python$' /opt/anaconda3/envs --color never -E /proc",
+        },
+      }, -- if you add your own searches, they go here.
+      options = {}, -- if you add plugin options, they go here.
+    },
+  },
+  {
+    'mfussenegger/nvim-dap',
+    event = 'VeryLazy',
+    dependencies = {
+      'rcarriga/nvim-dap-ui', -- sidebars, REPL, scopes
+      {
+        'jay-babu/mason-nvim-dap.nvim',
+        config = function(_, opts)
+          require('mason-nvim-dap').setup(opts)
+        end,
+        opts = {
+          -- This is the crucial part that links mason and dap
+          handlers = {},
+          ensure_installed = { 'python' },
+        },
+      }, -- installs debugpy automatically
+
+      -- 'theHamsta/nvim-dap-virtual-text',
+      -- UI for DAP
+      {
+        'rcarriga/nvim-dap-ui',
+        config = function()
+          local dapui = require 'dapui'
+          dapui.setup()
+          -- Auto-open/close UI on debug events
+          local dap = require 'dap'
+          dap.listeners.after.event_initialized['dapui_config'] = function()
+            dapui.open()
+          end
+          dap.listeners.before.event_terminated['dapui_config'] = function()
+            dapui.close()
+          end
+          dap.listeners.before.event_exited['dapui_config'] = function()
+            dapui.close()
+          end
+        end,
+      },
+    },
+    keys = {},
+    config = function()
+      local dap = require 'dap'
+      require('dap.ext.vscode').load_launchjs(nil, {})
+      -- Vscode-like launch json
+      -- require('dap.ext.vscode').load_launchjs(
+      --   -- path relative to project root:
+      --   '.nvim/launch.json',
+      --   { python = { 'python', 'dap-python' } } -- adapter name mapping
+      -- )
+
+      -- Basic key-maps
+      vim.keymap.set('n', '<F9>', dap.continue, { desc = 'DAP Continue' })
+      vim.keymap.set('n', '<F8>', dap.step_over, { desc = 'DAP Step Over' })
+      vim.keymap.set('n', '<F7>', dap.step_into, { desc = 'DAP Step Into' })
+      vim.keymap.set('n', '<S-F8>', dap.step_out, { desc = 'DAP Step Out' })
+      vim.keymap.set('n', '<F6>', dap.terminate, { desc = 'DAP: Terminate Session' })
+      vim.keymap.set('n', '<leader>b', dap.toggle_breakpoint, { desc = 'DAP Toggle BP' })
+    end,
+  },
+
+  -- Python adapter ----------------------------------------------------
+  {
+    'mfussenegger/nvim-dap-python',
+    dependencies = { 'mfussenegger/nvim-dap' },
+    ft = 'python',
+    config = function()
+      --  ❱❱ 1-line setup: Mason installs debugpy in ~/.local/share/nvim/mason
+      require('dap-python').resolve_python = function()
+        return os.getenv 'VIRTUAL_ENV' .. '/bin/python'
+      end
+      -- require('dap-python').setup(require('mason-registry').get_package('debugpy'):get_install_path() .. '/venv/bin/python')
+
+      -- default runner detection: pytest > django > unittest
+      -- force unittest explicitly:
+      require('dap-python').test_runner = 'unittest'
+
+      -- handy test shortcuts
+      vim.keymap.set('n', '<leader>dt', function()
+        require('dap-python').test_method()
+      end, { desc = 'Debug nearest test' })
+      vim.keymap.set('n', '<leader>dT', function()
+        require('dap-python').test_class()
+      end, { desc = 'Debug test class' })
+    end,
+  },
 }

@@ -13,22 +13,17 @@ if &shortmess =~ 'A'
 else
   set shortmess=aoO
 endif
-badd +1110 ~/.config/nvim/init.lua
-badd +852 lua/custom/plugins/init.lua
-badd +1 ./
+badd +963 ~/.config/nvim/init.lua
+badd +957 lua/custom/plugins/init.lua
+badd +0 ./
+badd +13 ~/.config/nvim/lua/custom/plugins/debugging.lua
+badd +14 ~/.config/nvim/install-debian.sh
 argglobal
 %argdel
 $argadd ./
 edit lua/custom/plugins/init.lua
-wincmd t
-let s:save_winminheight = &winminheight
-let s:save_winminwidth = &winminwidth
-set winminheight=0
-set winheight=1
-set winminwidth=0
-set winwidth=1
 argglobal
-balt ~/.config/nvim/init.lua
+balt ~/.config/nvim/lua/custom/plugins/debugging.lua
 setlocal foldmethod=manual
 setlocal foldexpr=v:lua.vim.treesitter.foldexpr()
 setlocal foldmarker={{{,}}}
@@ -39,12 +34,12 @@ setlocal foldnestmax=20
 setlocal foldenable
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 852 - ((19 * winheight(0) + 23) / 47)
+let s:l = 954 - ((24 * winheight(0) + 25) / 51)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 852
-normal! 03|
+keepjumps 954
+normal! 07|
 tabnext 1
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0 && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'
   silent exe 'bwipe ' . s:wipebuf
@@ -52,15 +47,12 @@ endif
 unlet! s:wipebuf
 set winheight=1 winwidth=20
 let &shortmess = s:shortmess_save
-let &winminheight = s:save_winminheight
-let &winminwidth = s:save_winminwidth
 let s:sx = expand("<sfile>:p:r")."x.vim"
 if filereadable(s:sx)
   exe "source " . fnameescape(s:sx)
 endif
 let &g:so = s:so_save | let &g:siso = s:siso_save
 set hlsearch
-nohlsearch
 doautoall SessionLoadPost
 unlet SessionLoad
 " vim: set ft=vim :
