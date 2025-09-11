@@ -177,7 +177,7 @@ return {
       { '<C-0>', '<Cmd>BufferLast<CR>', desc = 'Go to last buffer' },
 
       -- Pin/unpin buffer
-      { '<C-p>', '<Cmd>BufferPin<CR>', desc = 'Pin buffer' },
+      -- { '<>', '<Cmd>BufferPin<CR>', desc = 'Pin buffer' },
 
       -- Close buffer
       { '<C-c>', '<Cmd>BufferClose<CR>', desc = 'Close buffer' },
@@ -1057,6 +1057,35 @@ return {
       vim.keymap.set('n', '<leader>dT', function()
         require('dap-python').test_class()
       end, { desc = 'Debug test class' })
+    end,
+  },
+  -- Copilot, only enable AI completion
+  {
+    'zbirenbaum/copilot.lua',
+    cmd = 'Copilot',
+    config = function()
+      require("copilot").setup({
+        suggestion = { enabled = true },
+        panel = { enabled = false },
+        filetypes = {
+          yaml = false,
+          markdown =true ,
+          help = true,
+          gitcommit = true,
+          gitrebase = false,
+          hgcommit = false,
+          svn = false,
+          cvs = false,
+          ["."] = false,
+        },
+      })
+    end,
+  },
+  {
+    'zbirenbaum/copilot-cmp',
+    dependencies = 'zbirenbaum/copilot.lua',
+    config = function()
+      require('copilot_cmp').setup()
     end,
   },
 }
