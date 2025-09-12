@@ -213,6 +213,14 @@ vim.g.neovide_scale_factor = 0.9
 -- vim.keymap.set({ 'n', 'v' }, 'mo', '<cmd>BookmarksGoto<cr>', { desc = 'Go to bookmark at current active BookmarkList' })
 -- vim.keymap.set({ 'n', 'v' }, 'ma', '<cmd>BookmarksCommands<cr>', { desc = 'Find and trigger a bookmark command.' })
 
+-- Code Companion
+vim.keymap.set({ 'n', 'v' }, '<C-a>', '<cmd>CodeCompanionActions<cr>', { noremap = true, silent = true })
+vim.keymap.set({ 'n', 'v' }, '<LocalLeader>a', '<cmd>CodeCompanionChat Toggle<cr>', { noremap = true, silent = true })
+vim.keymap.set('v', 'ga', '<cmd>CodeCompanionChat Add<cr>', { noremap = true, silent = true })
+
+-- Expand 'cc' into 'CodeCompanion' in the command line
+vim.cmd [[cab cc CodeCompanion]]
+
 -- Terminal
 vim.keymap.set('n', '<leader>tl', '<cmd>ToggleTermSendCurrentLine<cr>', { desc = 'Send current line to ToggleTerm (terminal 1)' })
 vim.keymap.set('n', '<leader>tl1', '<cmd>ToggleTermSendCurrentLine 1<cr>', { desc = 'Send current line to ToggleTerm (terminal 1)' })
@@ -576,7 +584,6 @@ require('lazy').setup({
 
       -- Useful status updates for LSP.
       { 'j-hui/fidget.nvim', opts = {} },
-
     },
     config = function()
       -- Brief aside: **What is LSP?**
@@ -956,6 +963,8 @@ require('lazy').setup({
               luasnip.jump(-1)
             end
           end, { 'i', 's' }),
+          -- Add the manual completion mapping for Minuet
+          -- ['<A-y>'] = require('minuet').make_cmp_map(),
 
           -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
           --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
@@ -966,7 +975,15 @@ require('lazy').setup({
           { name = 'luasnip' },
           { name = 'path' },
           { name = 'buffer' },
-          { name = 'copilot', group_index = 2 }, -- Add this
+          { name = 'copilot', group_index = 2 }, -- Copilot
+          -- { name = 'minuet' }, -- Minuet
+        },
+        performance = {
+          -- It is recommended to increase the timeout duration due to
+          -- the typically slower response speed of LLMs compared to
+          -- other completion sources. This is not needed when you only
+          -- need manual completion.
+          fetching_timeout = 2000,
         },
       }
     end,

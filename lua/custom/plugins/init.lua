@@ -1064,21 +1064,21 @@ return {
     'zbirenbaum/copilot.lua',
     cmd = 'Copilot',
     config = function()
-      require("copilot").setup({
+      require('copilot').setup {
         suggestion = { enabled = true },
         panel = { enabled = false },
         filetypes = {
           yaml = false,
-          markdown =true ,
+          markdown = true,
           help = true,
           gitcommit = true,
           gitrebase = false,
           hgcommit = false,
           svn = false,
           cvs = false,
-          ["."] = false,
+          ['.'] = false,
         },
-      })
+      }
     end,
   },
   {
@@ -1087,5 +1087,183 @@ return {
     config = function()
       require('copilot_cmp').setup()
     end,
+  },
+  {
+    'olimorris/codecompanion.nvim',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+    },
+    opts = {
+      allow_insecure = true,
+      proxy = 'socks5://127.0.0.1:8083',
+      adapters = {
+        http = {
+          ollama = function()
+            return require('codecompanion.adapters').extend('ollama', {
+              env = {
+                url = 'http://10.66.65.129:11434',
+                api_key = 'dummy',
+              },
+              headers = {
+                ['Content-Type'] = 'application/json',
+                ['Authorization'] = 'Bearer ${api_key}',
+              },
+              parameters = {
+                sync = true,
+              },
+            })
+          end,
+          trtllm = function()
+            return require('codecompanion.adapters').extend('openai_compatible', {
+              name = 'trtllm',
+              env = {
+                url = 'http://10.66.65.129:8000/v1',
+                api_key = 'dummy',
+                chat_url = '/chat/completions',
+              },
+              schema = {
+                model = { default = 'Qwen/Qwen2.5-Coder-7B-Instruct' },
+                num_ctx = { default = 8192 },
+                think = { default = false },
+              },
+            })
+          end,
+          openrouter = function()
+            return require('codecompanion.adapters').extend('openai_compatible', {
+              env = {
+                url = 'https://openrouter.ai/api',
+                api_key = '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',
+                chat_url = '/v1/chat/completions',
+              },
+              schema = {
+                model = {
+                  default = 'x-ai/grok-code-fast-1',
+                },
+              },
+            })
+          end,
+        },
+      },
+      -- config = function(_, opts)
+      --   vim.env.OPENROUTER_API_KEY = 'dummy'
+      --   vim.env.CODECOMPANION_OPENAI_API_KEY = 'dummy'
+      --   vim.env.CODECOMPANION_OPENAI_BASE_URL = 'http://10.66.65.129:8000/v1'
+      --   vim.env.CODECOMPANION_OLLAMA_API_KEY = 'dummy'
+      --   vim.env.CODECOMPANION_OLLAMA_BASE_URL = 'http://10.66.65.129:11434'
+      --   require('codecompanion').setup(opts)
+      -- end,
+      strategies = {
+        chat = { adapter = 'openrouter' },
+        inline = {
+          adapter = 'openrouter',
+          keymaps = {
+            accept_change = {
+              modes = { n = 'ga' },
+              description = 'Accept the suggested change',
+            },
+            reject_change = {
+              modes = { n = 'gr' },
+              opts = { nowait = true },
+              description = 'Reject the suggested change',
+            },
+          },
+        },
+      },
+      display = {
+        action_palette = {
+          provider = 'snacks', -- Can be "default", "telescope", "fzf_lua", "mini_pick" or "snacks". If not specified, the plugin will autodetect installed providers.
+          opts = {
+            show_default_actions = true, -- Show the default actions in the action palette?
+            show_default_prompt_library = true, -- Show the default prompt library in the action palette?
+            title = 'CodeCompanion actions', -- The title of the action palette
+          },
+        },
+      },
+    },
+  },
+  {
+    'milanglacier/minuet-ai.nvim',
+    enabled = false, -- WARN: This plugin is literally a shit!!!
+    dependencies = {
+      { 'nvim-lua/plenary.nvim' },
+      -- optional, if you are using virtual-text frontend, nvim-cmp is not
+      -- required.
+      { 'hrsh7th/nvim-cmp' },
+      -- -- optional, if you are using virtual-text frontend, blink is not required.
+      -- { 'Saghen/blink.cmp' },
+    },
+    opts = {
+      presets = {
+        vllm = {
+          provider = 'openai_fim_compatible',
+          request_timeout = 20,
+          throttle = 400,
+          debounce = 100,
+          context_window = 1024,
+
+          provider_options = {
+            openai_compatible = {
+              model = 'microsoft/Phi-3-mini-128k-instruct',
+              -- system = 'see [Prompt] section for the default value',
+              -- few_shots = 'see [Prompt] section for the default value',
+              -- chat_input = 'See [Prompt Section for default value]',
+              stream = false,
+              end_point = 'https://10.66.65.129:8001/v1/chat/completions',
+              -- api_key = function()
+              --   return 'TERM'
+              -- end,
+              api_key = 'VLLM_API_KEY',
+              name = 'vllm',
+              optional = {
+                stop = nil,
+                max_tokens = 1024,
+                top_p = 0.3,
+              },
+            },
+          },
+        },
+        gemini = {
+          provider = 'gemini',
+          request_timeout = 20,
+          throttle = 2000,
+          debounce = 500,
+          context_window = 32000,
+          provider_options = {
+            gemini = {
+              model = 'gemini-2.5-flash',
+              -- system = 'see [Prompt] section for the default value',
+              -- few_shots = 'see [Prompt] section for the default value',
+              -- chat_input = 'See [Prompt Section for default value]',
+              stream = false,
+              end_point = 'https://generativelanguage.googleapis.com/v1beta/models',
+              api_key = function()
+                return 'AIzaSyBrT_88zuGas-k8sixDPbbql6cr5X8uE7c'
+              end,
+              optional = {
+                top_p = 0.3,
+                generationConfig = {
+                  maxOutputTokens = 256,
+                  -- When using `gemini-2.5-flash`, it is recommended to entirely
+                  -- disable thinking for faster completion retrieval.
+                  thinkingConfig = {
+                    thinkingBudget = 0,
+                  },
+                },
+                safetySettings = {
+                  {
+                    -- HARM_CATEGORY_HATE_SPEECH,
+                    -- HARM_CATEGORY_HARASSMENT
+                    -- HARM_CATEGORY_SEXUALLY_EXPLICIT
+                    category = 'HARM_CATEGORY_DANGEROUS_CONTENT',
+                    -- BLOCK_NONE
+                    threshold = 'BLOCK_ONLY_HIGH',
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
   },
 }
