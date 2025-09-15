@@ -1142,6 +1142,22 @@ return {
               },
             })
           end,
+          gemini = function()
+            return require('codecompanion.adapters').extend('gemini', {
+              -- Prefer environment variables; can also use "cmd:..." to shell out
+              env = {
+                -- Example: export GEMINI_API_KEY=...
+                api_key = 'AIzaSyBrT_88zuGas-k8sixDPbbql6cr5X8uE7c',
+              },
+              -- Optional: set a default model via the schema hook
+              schema = {
+                model = {
+                  -- Pick a valid Gemini model (examples below)
+                  default = 'gemini-2.5-pro',
+                },
+              },
+            })
+          end,
         },
       },
       -- config = function(_, opts)
@@ -1153,9 +1169,9 @@ return {
       --   require('codecompanion').setup(opts)
       -- end,
       strategies = {
-        chat = { adapter = 'openrouter' },
+        chat = { adapter = 'gemini' },
         inline = {
-          adapter = 'openrouter',
+          adapter = 'gemini',
           keymaps = {
             accept_change = {
               modes = { n = 'ga' },
