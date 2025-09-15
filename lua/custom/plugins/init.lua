@@ -1130,14 +1130,51 @@ return {
           end,
           openrouter = function()
             return require('codecompanion.adapters').extend('openai_compatible', {
+              name = 'openrouter',
               env = {
                 url = 'https://openrouter.ai/api',
-                api_key = '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',
+                api_key = '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',
                 chat_url = '/v1/chat/completions',
               },
               schema = {
                 model = {
                   default = 'x-ai/grok-code-fast-1',
+                },
+                temperature = {
+                  default = 0.3,
+                },
+              },
+            })
+          end,
+          gemini = function()
+            return require('codecompanion.adapters').extend('gemini', {
+              name = 'gemini',
+              env = {
+                api_key = 'AIzaSyBrT_88zuGas-k8sixDPbbql6cr5X8uE7c',
+              },
+              schema = {
+                model = {
+                  default = 'gemini-2.5-pro',
+                },
+              },
+            })
+          end,
+          local_gemini = function()
+            return require('codecompanion.adapters').extend('openai_compatible', {
+              name = 'local_gemini',
+              env = {
+                url = 'http://localhost:8787',
+                api_key = 'sk-local',
+              },
+              opts = {
+                stream = false,
+              },
+              schema = {
+                model = {
+                  default = 'gemini-2.5-pro',
+                },
+                temperature = {
+                  default = 0.3,
                 },
               },
             })
@@ -1170,6 +1207,7 @@ return {
       -- end,
       strategies = {
         chat = { adapter = 'gemini' },
+        agent = { adapter = 'gemini' },
         inline = {
           adapter = 'gemini',
           keymaps = {
