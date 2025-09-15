@@ -17,3 +17,7 @@ brew install gnu-sed
 # pip install pyright
 # pip install python-lsp-server[all]
 # pip install python-lsp-ruff # Fast linting
+
+# Optional
+# Install Gemini CLI to use the `gemini_cli` adapter in CodeCompanion.
+# npm install -g @google/gemini-cli
