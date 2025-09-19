@@ -213,6 +213,9 @@ vim.g.neovide_scale_factor = 0.9
 -- vim.keymap.set({ 'n', 'v' }, 'mo', '<cmd>BookmarksGoto<cr>', { desc = 'Go to bookmark at current active BookmarkList' })
 -- vim.keymap.set({ 'n', 'v' }, 'ma', '<cmd>BookmarksCommands<cr>', { desc = 'Find and trigger a bookmark command.' })
 
+-- Live grep
+vim.keymap.set('n', '<leader>fl', ":lua require('telescope').extensions.live_grep_args.live_grep_args()<CR>")
+
 -- Code Companion
 vim.keymap.set({ 'n', 'v' }, '<C-a>', '<cmd>CodeCompanionActions<cr>', { noremap = true, silent = true })
 vim.keymap.set({ 'n', 'v' }, '<LocalLeader>a', '<cmd>CodeCompanionChat Toggle<cr>', { noremap = true, silent = true })
@@ -464,8 +467,11 @@ require('lazy').setup({
 
       -- Useful for getting pretty icons, but requires a Nerd Font.
       { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
+      { 'nvim-telescope/telescope-live-grep-args.nvim', version = '^1.0.0' },
     },
     config = function()
+      local lga_actions = require 'telescope-live-grep-args.actions'
+
       -- Telescope is a fuzzy finder that comes with a lot of different things that
       -- it can fuzzy find! It's more than just a "file finder", it can search
       -- many different aspects of Neovim, your workspace, LSP, and more!
@@ -501,16 +507,32 @@ require('lazy').setup({
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
           },
-          -- TODO: specify project location
+          -- NOTE: specify project location
           project = {
             base_dirs = {
               -- '~/workspace',
               -- '~/Documents/lichoin/',
             },
             hidden_files = true, -- Show hidden files in project list
-            theme = 'dropdown',
+            theme = 'ivy',
           },
           -- refactoring = {},
+          live_grep_args = {
+            auto_quoting = true, -- enable/disable auto-quoting
+            -- define mappings, e.g.
+            mappings = { -- extend mappings
+              i = {
+                ['<C-k>'] = lga_actions.quote_prompt(),
+                ['<C-i>'] = lga_actions.quote_prompt { postfix = ' --iglob ' },
+                -- freeze the current list and start a fuzzy search in the frozen list
+                ['<C-space>'] = lga_actions.to_fuzzy_refine,
+              },
+            },
+            -- ... also accepts theme settings, for example:
+            -- theme = "dropdown", -- use dropdown theme
+            -- theme = { }, -- use own theme spec
+            -- layout_config = { mirror=true }, -- mirror preview pane
+          },
         },
       }
 
@@ -518,8 +540,11 @@ require('lazy').setup({
       pcall(require('telescope').load_extension, 'fzf')
       pcall(require('telescope').load_extension, 'ui-select')
       pcall(require('telescope').load_extension, 'project')
+      pcall(require('telescope').load_extension, 'live_grep_args')
       -- pcall(require('telescope').load_extension, 'refactoring')
 
+      local live_grep_args_shortcuts = require 'telescope-live-grep-args.shortcuts'
+      vim.keymap.set('v', '<leader>gc', live_grep_args_shortcuts.grep_visual_selection)
       -- See `:help telescope.builtin`
       local builtin = require 'telescope.builtin'
       vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
@@ -1155,3 +1180,22 @@ require('lazy').setup({
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
+
+function LoadEnv(path)
+  local ok, lines = pcall(vim.fn.readfile, path)
+  if not ok then
+    return
+  end
+  for _, line in ipairs(lines) do
+    if line:match '%S' and not line:match '^%s*#' then
+      local k, v = line:match '^%s*([%w_%.%-]+)%s*=%s*(.*)%s*$'
+      if k and v then
+        v = v:gsub('^%s*["\']?(.-)["\']?%s*$', '%1')
+        vim.env[k] = v
+      end
+    end
+  end
+end
+
+-- Example: load project .env automatically
+-- load_env(vim.fn.getcwd() .. "/.env")

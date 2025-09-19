@@ -1320,4 +1320,54 @@ return {
       },
     },
   },
+  {
+    'amitds1997/remote-nvim.nvim',
+    version = '*', -- Pin to GitHub releases
+    dependencies = {
+      'nvim-lua/plenary.nvim', -- For standard functions
+      'MunifTanjim/nui.nvim', -- To build the plugin UI
+      'nvim-telescope/telescope.nvim', -- For picking b/w different remote methods
+    },
+    config = true,
+  },
+  {
+    'nvim-pack/nvim-spectre',
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    cmd = { 'Spectre' }, -- lazy-load on :Spectre
+    keys = {
+      {
+        '<leader>S',
+        function()
+          require('spectre').toggle()
+        end,
+        desc = 'Toggle Spectre',
+      },
+      {
+        '<leader>sw',
+        function()
+          require('spectre').open_visual { select_word = true }
+        end,
+        desc = 'Search word',
+      },
+      {
+        '<leader>sp',
+        function()
+          require('spectre').open_file_search { select_word = true }
+        end,
+        desc = 'Search in file',
+      },
+      {
+        '<leader>sl',
+        function()
+          require('spectre').resume_last_search()
+        end,
+        desc = 'Resume Spectre',
+      },
+    },
+    opts = {
+      open_cmd = 'vnew',
+      lnum_for_results = true,
+      use_trouble_qf = false,
+    },
+  },
 }
