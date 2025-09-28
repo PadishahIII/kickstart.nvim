@@ -119,6 +119,23 @@ vim.g.have_nerd_font = false
 -- Auto-save
 vim.o.autowriteall = true
 
+-- Auto-read
+-- 1) Enable autoread
+vim.o.autoread = true
+
+-- 2) Re-check file timestamps on focus/idle events (skip while in cmdline)
+vim.api.nvim_create_autocmd({ 'BufEnter', 'CursorHold', 'CursorHoldI', 'FocusGained' }, {
+  command = "if mode() != 'c' | checktime | endif",
+  pattern = { '*' },
+})
+
+-- 3) Optional: show a notification when a file was reloaded due to external change
+vim.api.nvim_create_autocmd('FileChangedShellPost', {
+  callback = function()
+    vim.notify('File changed on disk. Buffer reloaded.', vim.log.levels.WARN)
+  end,
+})
+
 -- https://github.com/rmagatti/auto-session?tab=readme-ov-file#recommended-sessionoptions-config
 -- vim.o.sessionoptions = 'blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions'
 -- Set zsh shell

@@ -18,6 +18,9 @@ brew install gnu-sed
 # pip install python-lsp-server[all]
 # pip install python-lsp-ruff # Fast linting
 
+# Markdown lint
+npm install -g markdownlint-cli
+
 # Optional
 # Install Gemini CLI to use the `gemini_cli` adapter in CodeCompanion.
 # npm install -g @google/gemini-cli
