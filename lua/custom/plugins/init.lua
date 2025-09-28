@@ -1399,6 +1399,10 @@ return {
             description = 'Write doc for the code near cursor',
             prompt = 'Write doc for @cursor based on its context',
           },
+          fix_diagnostic = {
+            description = 'Fix diagnostics',
+            prompt = 'Fix @diagnostics',
+          },
         },
       }
 
