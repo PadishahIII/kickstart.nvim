@@ -1066,7 +1066,7 @@ return {
   -- Copilot, only enable AI completion
   {
     'zbirenbaum/copilot.lua',
-    enabled = false,
+    enabled = true,
     cmd = 'Copilot',
     config = function()
       require('copilot').setup {
@@ -1327,6 +1327,7 @@ return {
   },
   {
     'amitds1997/remote-nvim.nvim',
+    enabled = false,
     version = '*', -- Pin to GitHub releases
     dependencies = {
       'nvim-lua/plenary.nvim', -- For standard functions
@@ -1443,6 +1444,33 @@ return {
       vim.keymap.set('n', '<leader>oe', function()
         require('opencode').prompt 'Explain @cursor and its context'
       end, { desc = 'Explain this code' })
+    end,
+  },
+  {
+    'nosduco/remote-sshfs.nvim',
+    dependencies = { 'nvim-telescope/telescope.nvim', 'nvim-lua/plenary.nvim' },
+    config = function()
+      local api = require 'remote-sshfs.api'
+      vim.keymap.set('n', '<leader>rc', api.connect, {})
+      vim.keymap.set('n', '<leader>rd', api.disconnect, {})
+      vim.keymap.set('n', '<leader>re', api.edit, {})
+      -- Override telescope find_files and live_grep to make dynamic based on if connected to host
+      local builtin = require 'telescope.builtin'
+      local connections = require 'remote-sshfs.connections'
+      vim.keymap.set('n', '<leader>ff', function()
+        if connections.is_connected() then
+          api.find_files()
+        else
+          builtin.find_files()
+        end
+      end, {})
+      vim.keymap.set('n', '<leader>sg', function()
+        if connections.is_connected() then
+          api.live_grep()
+        else
+          builtin.live_grep()
+        end
+      end, {})
     end,
   },
 }

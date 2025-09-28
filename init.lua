@@ -87,6 +87,14 @@ P.S. You can delete this when you're done too. It's your config now! :)
 -- Set <space> as the leader key
 -- See `:help mapleader`
 
+-- :help copilot
+local has_words_before = function()
+  if vim.api.nvim_buf_get_option(0, 'buftype') == 'prompt' then
+    return false
+  end
+  local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+  return col ~= 0 and vim.api.nvim_buf_get_text(0, line - 1, 0, line - 1, col, {})[1]:match '^%s*$' == nil
+end
 -- Disable neovide animation
 -- Disable all animations
 vim.g.neovide_scroll_animation_length = 0
@@ -550,6 +558,7 @@ require('lazy').setup({
             -- theme = { }, -- use own theme spec
             -- layout_config = { mirror=true }, -- mirror preview pane
           },
+          ['remote-sshfs'] = {},
         },
       }
 
@@ -558,6 +567,7 @@ require('lazy').setup({
       pcall(require('telescope').load_extension, 'ui-select')
       pcall(require('telescope').load_extension, 'project')
       pcall(require('telescope').load_extension, 'live_grep_args')
+      pcall(require('telescope').load_extension, 'remote-sshfs')
       -- pcall(require('telescope').load_extension, 'refactoring')
 
       local live_grep_args_shortcuts = require 'telescope-live-grep-args.shortcuts'
@@ -968,6 +978,13 @@ require('lazy').setup({
         --
         -- No, but seriously. Please read `:help ins-completion`, it is really good!
         mapping = cmp.mapping.preset.insert {
+          -- ['<Tab>'] = vim.schedule_wrap(function(fallback)
+          --   if cmp.visible() and has_words_before() then
+          --     cmp.select_next_item { behavior = cmp.SelectBehavior.Select }
+          --   else
+          --     fallback()
+          --   end
+          -- end),
           -- Select the [n]ext item
           ['<C-n>'] = cmp.mapping.select_next_item(),
           -- Select the [p]revious item
@@ -1019,6 +1036,25 @@ require('lazy').setup({
           { name = 'buffer' },
           { name = 'copilot', group_index = 2 }, -- Copilot
           -- { name = 'minuet' }, -- Minuet
+        },
+
+        sorting = {
+          priority_weight = 2,
+          comparators = {
+            require('copilot_cmp.comparators').prioritize,
+
+            -- Below is the default comparitor list and order for nvim-cmp
+            cmp.config.compare.offset,
+            -- cmp.config.compare.scopes, --this is commented in nvim-cmp too
+            cmp.config.compare.exact,
+            cmp.config.compare.score,
+            cmp.config.compare.recently_used,
+            cmp.config.compare.locality,
+            cmp.config.compare.kind,
+            cmp.config.compare.sort_text,
+            cmp.config.compare.length,
+            cmp.config.compare.order,
+          },
         },
         performance = {
           -- It is recommended to increase the timeout duration due to
