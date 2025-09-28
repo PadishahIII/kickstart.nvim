@@ -13,18 +13,19 @@ if &shortmess =~ 'A'
 else
   set shortmess=aoO
 endif
-badd +1037 ~/.config/nvim/init.lua
-badd +1085 lua/custom/plugins/init.lua
+badd +1196 ~/.config/nvim/init.lua
+badd +1097 lua/custom/plugins/init.lua
 badd +4 .env
 badd +1 ./
 badd +1 \[CodeCompanion]\ 2605366
 badd +1 \[CodeCompanion]\ 1072673
 badd +22 ~/.config/nvim/install-debian.sh
 badd +48 lazy-lock.json
+badd +9 ~/.config/nvim/lua/kickstart/plugins/lint.lua
 argglobal
 %argdel
 $argadd ./
-edit ~/.config/nvim/init.lua
+edit ~/.config/nvim/lua/kickstart/plugins/lint.lua
 let s:save_splitbelow = &splitbelow
 let s:save_splitright = &splitright
 set splitbelow splitright
@@ -44,7 +45,7 @@ set winwidth=1
 wincmd =
 argglobal
 enew
-balt lua/custom/plugins/init.lua
+balt ~/.config/nvim/init.lua
 setlocal foldmethod=manual
 setlocal foldexpr=0
 setlocal foldmarker={{{,}}}
@@ -55,7 +56,7 @@ setlocal foldnestmax=20
 setlocal foldenable
 wincmd w
 argglobal
-balt lua/custom/plugins/init.lua
+balt ~/.config/nvim/init.lua
 setlocal foldmethod=manual
 setlocal foldexpr=v:lua.vim.treesitter.foldexpr()
 setlocal foldmarker={{{,}}}
@@ -66,12 +67,12 @@ setlocal foldnestmax=20
 setlocal foldenable
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 1026 - ((26 * winheight(0) + 30) / 61)
+let s:l = 32 - ((31 * winheight(0) + 30) / 61)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 1026
-normal! 058|
+keepjumps 32
+normal! 08|
 wincmd w
 2wincmd w
 wincmd =
