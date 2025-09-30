@@ -1403,6 +1403,10 @@ return {
             description = 'Fix diagnostics',
             prompt = 'Fix @diagnostics',
           },
+          generate_commit_message = {
+            description = 'Generate commit message',
+            prompt = '@diff: Generate a concise Conventional Commit message for the staged changes. Output only the commit message (subject line and optional body), no extra text.',
+          },
         },
       }
 
@@ -1475,6 +1479,19 @@ return {
           builtin.live_grep()
         end
       end, {})
+    end,
+  },
+  {
+    'fatih/vim-go',
+    ft = { 'go', 'gomod', 'gowork', 'gotmpl' },
+    -- Run this once on install/update to fetch gopls, goimports, etc.
+    build = ':GoUpdateBinaries', -- or ":GoInstallBinaries"
+    init = function()
+      -- Recommended basics
+      vim.g.go_def_mode = 'gopls'
+      vim.g.go_info_mode = 'gopls'
+      vim.g.go_fmt_command = 'goimports'
+      vim.g.go_fmt_autosave = 1
     end,
   },
 }
