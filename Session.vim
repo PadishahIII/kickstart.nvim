@@ -13,7 +13,7 @@ if &shortmess =~ 'A'
 else
   set shortmess=aoO
 endif
-badd +1196 ~/.config/nvim/init.lua
+badd +173 ~/.config/nvim/init.lua
 badd +1097 lua/custom/plugins/init.lua
 badd +4 .env
 badd +1 ./
@@ -21,20 +21,10 @@ badd +1 \[CodeCompanion]\ 2605366
 badd +1 \[CodeCompanion]\ 1072673
 badd +22 ~/.config/nvim/install-debian.sh
 badd +48 lazy-lock.json
-badd +9 ~/.config/nvim/lua/kickstart/plugins/lint.lua
+badd +1 ~/.config/nvim/lua/kickstart/plugins/lint.lua
 argglobal
 %argdel
 $argadd ./
-edit ~/.config/nvim/lua/kickstart/plugins/lint.lua
-let s:save_splitbelow = &splitbelow
-let s:save_splitright = &splitright
-set splitbelow splitright
-wincmd _ | wincmd |
-vsplit
-1wincmd h
-wincmd w
-let &splitbelow = s:save_splitbelow
-let &splitright = s:save_splitright
 wincmd t
 let s:save_winminheight = &winminheight
 let s:save_winminwidth = &winminwidth
@@ -42,10 +32,9 @@ set winminheight=0
 set winheight=1
 set winminwidth=0
 set winwidth=1
-wincmd =
 argglobal
 enew
-balt ~/.config/nvim/init.lua
+balt ~/.config/nvim/lua/kickstart/plugins/lint.lua
 setlocal foldmethod=manual
 setlocal foldexpr=0
 setlocal foldmarker={{{,}}}
@@ -54,28 +43,6 @@ setlocal foldlevel=0
 setlocal foldminlines=1
 setlocal foldnestmax=20
 setlocal foldenable
-wincmd w
-argglobal
-balt ~/.config/nvim/init.lua
-setlocal foldmethod=manual
-setlocal foldexpr=v:lua.vim.treesitter.foldexpr()
-setlocal foldmarker={{{,}}}
-setlocal foldignore=#
-setlocal foldlevel=0
-setlocal foldminlines=1
-setlocal foldnestmax=20
-setlocal foldenable
-silent! normal! zE
-let &fdl = &fdl
-let s:l = 32 - ((31 * winheight(0) + 30) / 61)
-if s:l < 1 | let s:l = 1 | endif
-keepjumps exe s:l
-normal! zt
-keepjumps 32
-normal! 08|
-wincmd w
-2wincmd w
-wincmd =
 tabnext 1
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0 && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'
   silent exe 'bwipe ' . s:wipebuf
@@ -91,7 +58,6 @@ if filereadable(s:sx)
 endif
 let &g:so = s:so_save | let &g:siso = s:siso_save
 set hlsearch
-nohlsearch
 doautoall SessionLoadPost
 unlet SessionLoad
 " vim: set ft=vim :
