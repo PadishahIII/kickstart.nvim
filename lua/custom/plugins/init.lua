@@ -54,7 +54,7 @@ return {
           vim.keymap.set('n', '}', '<cmd>AerialNext<CR>', { buffer = bufnr, silent = true, desc = 'Next symbol' })
         end,
         filter_kind = {
-          -- 'Array',
+          'Array',
           -- 'Boolean',
           'Class',
           'Constant',
@@ -1483,6 +1483,7 @@ return {
   },
   {
     'fatih/vim-go',
+    enabled = false,
     ft = { 'go', 'gomod', 'gowork', 'gotmpl' },
     -- Run this once on install/update to fetch gopls, goimports, etc.
     build = ':GoUpdateBinaries', -- or ":GoInstallBinaries"
@@ -1492,6 +1493,145 @@ return {
       vim.g.go_info_mode = 'gopls'
       vim.g.go_fmt_command = 'goimports'
       vim.g.go_fmt_autosave = 1
+    end,
+    config = function()
+      -- Go buffer–local mappings that mirror common DAP keys
+      vim.api.nvim_create_autocmd('FileType', {
+        pattern = 'go',
+        callback = function()
+          local map = function(lhs, rhs, desc)
+            vim.keymap.set('n', lhs, rhs, { buffer = true, silent = true, desc = desc })
+          end
+          -- Leader-based (align with LazyVim DAP defaults like <leader>dc, <leader>db, etc.)
+          map('<leader>b', ':GoDebugBreakpoint<CR>', 'Toggle Breakpoint')
+          map('<leader>dx', ':GoDebugStop<CR>', 'Terminate')
+
+          -- Optional F-keys (commonly used by DAP UIs)
+          map('<F5>', ':GoDebugContinue<CR>', 'Go Continue')
+          map('<F8>', ':GoDebugNext<CR>', 'Step Over')
+          map('<F7>', ':GoDebugStep<CR>', 'Step Into')
+          map('<S-F8>', ':GoDebugStepOut<CR>', 'Step Out')
+        end,
+      })
+
+      -- Define once (e.g., in vim-go plugin config), only for Go buffers
+      vim.api.nvim_create_autocmd('FileType', {
+        pattern = 'go',
+        callback = function()
+          local function shim(cmd, go)
+            if vim.fn.exists(':' .. cmd) == 0 then
+              vim.api.nvim_create_user_command(cmd, function()
+                vim.cmd(go)
+              end, {})
+            end
+          end
+          shim('DapContinue', 'GoDebugContinue')
+          shim('DapStepOver', 'GoDebugNext')
+          shim('DapStepInto', 'GoDebugStep')
+          shim('DapStepOut', 'GoDebugStepOut')
+          shim('DapToggleBreakpoint', 'GoDebugBreakpoint')
+          shim('DapTerminate', 'GoDebugStop')
+        end,
+      })
+    end,
+  },
+  -- Go plugin with everything enabled
+  {
+    'ray-x/go.nvim',
+    ft = { 'go', 'gomod', 'gosum', 'gohtmltmpl', 'gotmpl', 'gotexttmpl' },
+    dependencies = {
+      'ray-x/guihua.lua',
+      'neovim/nvim-lspconfig',
+      'nvim-treesitter/nvim-treesitter',
+      'mfussenegger/nvim-dap',
+      'rcarriga/nvim-dap-ui',
+      'nvim-neotest/nvim-nio',
+      -- 'nvim-dap-virtual-text',
+    },
+    keys = {
+      --   { '<F9>', '<cmd>GoDebug<cr>', desc = 'Go Debug (launch)' },
+      --   { '<leader>dn', '<cmd>GoDebug -n<cr>', desc = 'Go Debug Nearest Test' },
+      --   { '<leader>dt', '<cmd>GoDebug -t<cr>', desc = 'Go Debug Test File' },
+      --   { '<leader>ds', '<cmd>GoDbgStop<cr>', desc = 'Go Debug Stop' },
+      --   { '<leader>dbk', '<cmd>GoBreakToggle<cr>', desc = 'Go Toggle Breakpoint' },
+      { '<leader>tf', '<cmd>GoTestFunc<cr>', desc = 'Go Test func' },
+      { '<leader>td', '<cmd>GoDebug -n<cr>', desc = 'Go debug test' },
+    },
+    opts = {
+      -- Core tooling
+      go = 'go',
+      goimports = 'gopls', -- LSP goimports + formatting
+      gofmt = 'gopls', -- use gopls for formatting
+      fillstruct = 'gopls', -- use gopls actions
+
+      -- LSP (use go.nvim’s tuned defaults)
+      lsp_cfg = true,
+      lsp_gofumpt = true,
+      lsp_keymaps = false, -- conflict with <leader>e
+      lsp_codelens = true,
+      lsp_inlay_hints = { enable = true },
+
+      -- Debugger (Delve via nvim-dap)
+      dap_debug = true,
+      dap_debug_keymap = true, -- GDB-style keys: c/n/s/o/S/u/D/C/b/P/p
+      dap_debug_gui = {}, -- use dap-ui if present
+      dap_debug_vt = { enabled = true, enabled_commands = true, all_frames = true },
+
+      -- Testing, coverage, floaterm
+      test_runner = 'go', -- can be "go", "dlv", "ginkgo", or "gotestsum"
+      verbose_tests = true,
+      run_in_floaterm = true, -- nice for ginkgo/gotestsum output
+      floaterm = { posititon = 'auto', width = 0.45, height = 0.98 },
+
+      -- Signs, diagnostics and textobjects
+      gocoverage_sign = '█',
+      sign_priority = 5,
+      textobjects = true,
+
+      -- Tags, snippets, linters
+      tag_options = 'json=omitempty',
+      luasnip = true,
+
+      -- Optional null-ls hooks inside go.nvim (pair with null-ls spec below)
+      -- null_ls = {
+      --   golangci_lint = {
+      --     method = { 'NULL_LS_DIAGNOSTICS_ON_SAVE', 'NULL_LS_DIAGNOSTICS_ON_OPEN' },
+      --   },
+      --   gotest = {
+      --     method = { 'NULL_LS_DIAGNOSTICS_ON_SAVE' },
+      --   },
+      -- },
+
+      -- Example default build tags used by some commands
+      -- build_tags = 'tag1,tag2',
+    },
+    config = function(_, opts)
+      require('go').setup(opts)
+      -- Format on save (goimports + gofumpt via gopls)
+      -- Comment out since it tries to install gopls everytime i save file
+      -- local grp = vim.api.nvim_create_augroup('GoFormat', {})
+      -- vim.api.nvim_create_autocmd('BufWritePre', {
+      --   group = grp,
+      --   pattern = '*.go',
+      --   callback = function()
+      --     require('go.format').goimports()
+      --   end,
+      -- })
+    end,
+    -- Install/update all required Go tools (dlv, golines, gotests, gomodifytags, etc.)
+    build = ':lua require("go.install").update_all_sync()',
+  },
+  -- nvim-dap virtual text
+  {
+    'theHamsta/nvim-dap-virtual-text',
+    enabled = false,
+    dependencies = {
+      'mfussenegger/nvim-dap',
+      'nvim-treesitter/nvim-treesitter', -- recommended for variable locations
+    },
+    opts = {}, -- you can also use config = function() require("nvim-dap-virtual-text").setup({}) end
+    config = function(_, opts)
+      require('nvim-dap-virtual-text').setup(opts)
     end,
   },
 }
