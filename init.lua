@@ -1116,7 +1116,7 @@ require('lazy').setup({
   },
 
   -- Highlight todo, notes, etc in comments
-  { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
+  { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim', 'nvim-tree/nvim-web-devicons' }, opts = { signs = false } },
 
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
@@ -1166,6 +1166,31 @@ require('lazy').setup({
           },
         },
       }
+
+      -- -- tab manager
+      -- require('mini.tabline').setup {
+      --   show_icons = false,
+      --   tabpage_section = 'left',
+      -- }
+      -- -- vim.o.showtabline = 2
+      -- -- Normal-mode mappings for Vim tabpages
+      -- local map = vim.keymap.set
+      -- local opts = { noremap = true, silent = true }
+      --
+      -- -- Close current tab
+      -- map('n', '<leader>tc', '<cmd>tabclose<cr>', opts)
+      --
+      -- -- Next / previous tab
+      -- map('n', '<C-.>', '<cmd>tabnext<cr>', opts)
+      -- map('n', '<C-,>', '<cmd>tabprevious<cr>', opts)
+      -- -- Jump directly to tab 1..9
+      -- for i = 1, 9 do
+      --   map('n', string.format('<leader>%d', i), function()
+      --     vim.cmd(i .. 'tabnext')
+      --   end, opts)
+      -- end
+      -- -- Save enough info to restore tabs and buffers
+      -- vim.o.sessionoptions = 'buffers,curdir,tabpages,winsize,terminal,globals'
     end,
   },
   { -- Highlight, edit, and navigate code

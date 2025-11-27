@@ -13,36 +13,28 @@ if &shortmess =~ 'A'
 else
   set shortmess=aoO
 endif
-badd +173 ~/.config/nvim/init.lua
-badd +1097 lua/custom/plugins/init.lua
+badd +1170 ~/.config/nvim/init.lua
+badd +144 lua/custom/plugins/init.lua
 badd +4 .env
-badd +1 ./
 badd +1 \[CodeCompanion]\ 2605366
 badd +1 \[CodeCompanion]\ 1072673
 badd +22 ~/.config/nvim/install-debian.sh
 badd +48 lazy-lock.json
 badd +1 ~/.config/nvim/lua/kickstart/plugins/lint.lua
+badd +60032 ~/.local/state/nvim/lsp.log
+badd +0 ./
 argglobal
 %argdel
 $argadd ./
-wincmd t
-let s:save_winminheight = &winminheight
-let s:save_winminwidth = &winminwidth
-set winminheight=0
-set winheight=1
-set winminwidth=0
-set winwidth=1
+edit lua/custom/plugins/init.lua
 argglobal
-enew
-balt ~/.config/nvim/lua/kickstart/plugins/lint.lua
-setlocal foldmethod=manual
-setlocal foldexpr=0
-setlocal foldmarker={{{,}}}
-setlocal foldignore=#
-setlocal foldlevel=0
-setlocal foldminlines=1
-setlocal foldnestmax=20
-setlocal foldenable
+balt ~/.config/nvim/init.lua
+let s:l = 161 - ((19 * winheight(0) + 31) / 63)
+if s:l < 1 | let s:l = 1 | endif
+keepjumps exe s:l
+normal! zt
+keepjumps 161
+normal! 024|
 tabnext 1
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0 && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'
   silent exe 'bwipe ' . s:wipebuf
@@ -50,14 +42,13 @@ endif
 unlet! s:wipebuf
 set winheight=1 winwidth=20
 let &shortmess = s:shortmess_save
-let &winminheight = s:save_winminheight
-let &winminwidth = s:save_winminwidth
 let s:sx = expand("<sfile>:p:r")."x.vim"
 if filereadable(s:sx)
   exe "source " . fnameescape(s:sx)
 endif
 let &g:so = s:so_save | let &g:siso = s:siso_save
 set hlsearch
+nohlsearch
 doautoall SessionLoadPost
 unlet SessionLoad
 " vim: set ft=vim :
