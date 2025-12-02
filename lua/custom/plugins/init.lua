@@ -1555,7 +1555,9 @@ return {
       --   { '<leader>dt', '<cmd>GoDebug -t<cr>', desc = 'Go Debug Test File' },
       --   { '<leader>ds', '<cmd>GoDbgStop<cr>', desc = 'Go Debug Stop' },
       --   { '<leader>dbk', '<cmd>GoBreakToggle<cr>', desc = 'Go Toggle Breakpoint' },
-      { '<leader>tf', '<cmd>GoTestFunc<cr>', desc = 'Go Test func' },
+      { '<leader>tc', '<cmd>GoTestFunc<cr>', desc = 'Go Test func' },
+      { '<leader>ts', '<cmd>GoTestSubCase<cr>', desc = 'Go Test nearest subcase' },
+      { '<leader>tf', '<cmd>GoTestFile<cr>', desc = 'Go Test current file' },
       { '<leader>td', '<cmd>GoDebug -n<cr>', desc = 'Go debug test' },
     },
     opts = {
