@@ -1568,7 +1568,13 @@ return {
       fillstruct = 'gopls', -- use gopls actions
 
       -- LSP (use go.nvim’s tuned defaults)
-      lsp_cfg = true,
+      lsp_cfg = {
+        settings = {
+          gopls = {
+            completeFunctionCalls = false,
+          },
+        },
+      },
       lsp_gofumpt = true,
       lsp_keymaps = false, -- conflict with <leader>e
       lsp_codelens = true,
@@ -1618,6 +1624,7 @@ return {
       --   pattern = '*.go',
       --   callback = function()
       --     require('go.format').goimports()
+      --     require('go.format').gofmt()
       --   end,
       -- })
     end,
