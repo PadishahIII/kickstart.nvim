@@ -1049,9 +1049,9 @@ return {
         }
         dap.continue()
       end, { desc = 'DAP Continue' })
-      vim.keymap.set('n', 'n', dap.step_over, { desc = 'DAP Step Over' })
-      vim.keymap.set('n', 's', dap.step_into, { desc = 'DAP Step Into' })
-      vim.keymap.set('n', 'o', dap.step_out, { desc = 'DAP Step Out' })
+      vim.keymap.set('n', '<F8>', dap.step_over, { desc = 'DAP Step Over' })
+      vim.keymap.set('n', '<F7>', dap.step_into, { desc = 'DAP Step Into' })
+      vim.keymap.set('n', '<S-F8>', dap.step_out, { desc = 'DAP Step Out' })
       vim.keymap.set('n', '<F6>', dap.terminate, { desc = 'DAP: Terminate Session' })
       vim.keymap.set('n', '<leader>b', dap.toggle_breakpoint, { desc = 'DAP Toggle BP' })
     end,
