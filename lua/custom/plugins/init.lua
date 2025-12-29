@@ -1027,13 +1027,31 @@ return {
       -- )
 
       -- Basic key-maps
-      vim.keymap.set('n', '<F9>', function()
-        require('dap').configurations.python = {} -- clear previous configs
+      vim.keymap.set('n', 'c', function()
+        require('dap').configurations.python = {
+          {
+            type = 'python',
+            request = 'launch',
+            name = 'Launch file (project venv)',
+            program = '${file}',
+            cwd = '${workspaceFolder}',
+            pythonPath = function()
+              local cwd = vim.fn.getcwd()
+              if vim.fn.executable(cwd .. '/.venv/bin/python') == 1 then
+                return cwd .. '/.venv/bin/python'
+              elseif vim.fn.executable(cwd .. '/venv/bin/python') == 1 then
+                return cwd .. '/venv/bin/python'
+              else
+                return 'python' -- fallback
+              end
+            end,
+          },
+        }
         dap.continue()
       end, { desc = 'DAP Continue' })
-      vim.keymap.set('n', '<F8>', dap.step_over, { desc = 'DAP Step Over' })
-      vim.keymap.set('n', '<F7>', dap.step_into, { desc = 'DAP Step Into' })
-      vim.keymap.set('n', '<S-F8>', dap.step_out, { desc = 'DAP Step Out' })
+      vim.keymap.set('n', 'n', dap.step_over, { desc = 'DAP Step Over' })
+      vim.keymap.set('n', 's', dap.step_into, { desc = 'DAP Step Into' })
+      vim.keymap.set('n', 'o', dap.step_out, { desc = 'DAP Step Out' })
       vim.keymap.set('n', '<F6>', dap.terminate, { desc = 'DAP: Terminate Session' })
       vim.keymap.set('n', '<leader>b', dap.toggle_breakpoint, { desc = 'DAP Toggle BP' })
     end,
