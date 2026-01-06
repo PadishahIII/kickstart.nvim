@@ -1677,11 +1677,12 @@ return {
   },
   {
     '3rd/image.nvim',
-    -- install by `brew install imagemagick`, `brew install jstkdng/programs/ueberzugpp`
-    -- `export DYLD_FALLBACK_LIBRARY_PATH="$(brew -- prefix)/lib:$DYLD_FALLBACK_LIBRARY_PATH"`
+    -- install by `brew install imagemagick`
+    -- `export DYLD_FALLBACK_LIBRARY_PATH="$(brew --prefix)/lib:$DYLD_FALLBACK_LIBRARY_PATH"`
     build = false, -- so that it doesn't build the rock https://github.com/3rd/image.nvim/issues/91#issuecomment-2453430239
     opts = {
       processor = 'magick_cli',
+      backend = 'kitty',
       integrations = {
         markdown = {
           enabled = true,
