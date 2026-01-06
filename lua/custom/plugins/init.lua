@@ -1662,4 +1662,47 @@ return {
       require('nvim-dap-virtual-text').setup(opts)
     end,
   },
+  {
+    'HakonHarnes/img-clip.nvim',
+    -- install by `brew install pngpaste`
+    event = 'VeryLazy',
+    opts = {
+      -- add options here
+      -- or leave it empty to use the default settings
+    },
+    keys = {
+      -- suggested keymap
+      { '<leader>p', '<cmd>PasteImage<cr>', desc = 'Paste image from system clipboard' },
+    },
+  },
+  {
+    '3rd/image.nvim',
+    -- install by `brew install imagemagick`, `brew install jstkdng/programs/ueberzugpp`
+    -- `export DYLD_FALLBACK_LIBRARY_PATH="$(brew -- prefix)/lib:$DYLD_FALLBACK_LIBRARY_PATH"`
+    build = false, -- so that it doesn't build the rock https://github.com/3rd/image.nvim/issues/91#issuecomment-2453430239
+    opts = {
+      processor = 'magick_cli',
+      integrations = {
+        markdown = {
+          enabled = true,
+          resolve_image_path = function(document_path, image_path, fallback)
+            -- absolute path -> keep
+            if image_path:match '^/' then
+              return image_path
+            end
+
+            -- Resolve relative to the markdown file's directory
+            local doc_dir = vim.fs.dirname(document_path)
+            local abs = vim.fs.normalize(doc_dir .. '/' .. image_path)
+
+            if vim.fn.filereadable(abs) == 1 then
+              return abs
+            end
+
+            return fallback(document_path, image_path)
+          end,
+        },
+      },
+    },
+  },
 }
