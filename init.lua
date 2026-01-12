@@ -834,6 +834,7 @@ require('lazy').setup({
         -- clangd = {},
         gopls = {},
         pyright = {},
+        phpactor = {},
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
@@ -876,6 +877,7 @@ require('lazy').setup({
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
+        'php-cs-fixer', -- Used to format PHP code
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -928,6 +930,7 @@ require('lazy').setup({
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
+        php = { 'php_cs_fixer', stop_after_first = true },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --
