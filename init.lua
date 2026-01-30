@@ -106,6 +106,13 @@ vim.g.neovide_cursor_trail_size = 0
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
+vim.keymap.set('n', '<leader>cp', function()
+  vim.fn.setreg('+', vim.fn.expand '%:p')
+end, { desc = 'Copy file path to clipboard' })
+vim.keymap.set('n', '<leader>cf', function()
+  vim.fn.setreg('+', vim.fn.expand '%:t')
+end, { desc = 'Copy file name to clipboard' })
+
 -- Allow clipboard copy paste in neovim
 vim.g.neovide_input_use_logo = 1
 vim.api.nvim_set_keymap('', '<D-v>', '+p<CR>', { noremap = true, silent = true })
@@ -931,6 +938,7 @@ require('lazy').setup({
       formatters_by_ft = {
         lua = { 'stylua' },
         php = { 'php_cs_fixer', stop_after_first = true },
+        xml = { 'xmllint' }, -- or { "xmlstarlet" }
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --
