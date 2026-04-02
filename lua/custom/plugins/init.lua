@@ -989,7 +989,7 @@ return {
         opts = {
           -- This is the crucial part that links mason and dap
           handlers = {},
-          ensure_installed = { 'python' },
+          ensure_installed = { 'python', 'codelldb' },
         },
       }, -- installs debugpy automatically
 
@@ -1018,6 +1018,41 @@ return {
     config = function()
       local dap = require 'dap'
       require('dap.ext.vscode').load_launchjs()
+
+      local codelldb_root = vim.fn.stdpath 'data' .. '/mason/packages/codelldb/extension'
+      local codelldb_path = codelldb_root .. '/adapter/codelldb'
+      local liblldb_name = 'liblldb.so'
+      if vim.fn.has 'mac' == 1 then
+        liblldb_name = 'liblldb.dylib'
+      elseif vim.fn.has 'win32' == 1 then
+        liblldb_name = 'liblldb.dll'
+      end
+
+      local liblldb_path = codelldb_root .. '/lldb/lib/' .. liblldb_name
+      if vim.fn.executable(codelldb_path) == 1 and vim.uv.fs_stat(liblldb_path) then
+        dap.adapters.codelldb = {
+          type = 'server',
+          port = '${port}',
+          executable = {
+            command = codelldb_path,
+            args = { '--liblldb', liblldb_path, '--port', '${port}' },
+          },
+        }
+
+        dap.configurations.rust = {
+          {
+            name = 'Rust: Launch executable',
+            type = 'codelldb',
+            request = 'launch',
+            cwd = '${workspaceFolder}',
+            stopOnEntry = false,
+            args = {},
+            program = function()
+              return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/target/debug/', 'file')
+            end,
+          },
+        }
+      end
 
       -- Vscode-like launch json
       -- require('dap.ext.vscode').load_launchjs(
@@ -1705,5 +1740,27 @@ return {
         },
       },
     },
+  },
+  {
+    'Saecki/crates.nvim',
+    event = { 'BufRead Cargo.toml' },
+    opts = {
+      completion = {
+        crates = {
+          enabled = true,
+        },
+      },
+      lsp = {
+        enabled = true,
+        actions = true,
+        completion = true,
+        hover = true,
+      },
+    },
+  },
+  {
+    'mrcjkb/rustaceanvim',
+    version = '^8',
+    ft = { 'rust' },
   },
 }

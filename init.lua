@@ -101,7 +101,18 @@ vim.g.neovide_scroll_animation_length = 0
 vim.g.neovide_cursor_animation_length = 0
 vim.g.neovide_position_animation_length = 0
 vim.g.neovide_cursor_trail_size = 0
+vim.g.rustaceanvim = {
+  server = {
+    default_settings = {
+      ['rust-analyzer'] = {
+        check = { command = 'clippy' },
+      },
+    },
+  },
+}
+local is_windows = vim.loop.os_uname().version:match 'Windows'
 
+vim.env.PATH = vim.fn.stdpath 'data' .. '/mason/bin' .. (is_windows and ';' or ':') .. vim.env.PATH
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
@@ -885,14 +896,20 @@ require('lazy').setup({
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
         'php-cs-fixer', -- Used to format PHP code
+        'codelldb', -- for Rust
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
       require('mason-lspconfig').setup {
         ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
-        automatic_installation = false,
+        automatic_enable = false,
         handlers = {
           function(server_name)
+            -- rustaceanvim sets up rust-analyzer itself
+            if server_name == 'rust_analyzer' then
+              return
+            end
+
             local server = servers[server_name] or {}
             -- This handles overriding only values explicitly passed
             -- by the server configuration above. Useful when disabling
@@ -938,6 +955,7 @@ require('lazy').setup({
       formatters_by_ft = {
         lua = { 'stylua' },
         php = { 'php_cs_fixer', stop_after_first = true },
+        rust = { 'rustfmt' },
         xml = { 'xmllint' }, -- or { "xmlstarlet" }
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
@@ -1211,7 +1229,7 @@ require('lazy').setup({
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc', 'rust', 'ron' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
