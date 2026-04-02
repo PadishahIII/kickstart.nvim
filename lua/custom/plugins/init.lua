@@ -1017,7 +1017,7 @@ return {
     keys = {},
     config = function()
       local dap = require 'dap'
-      require('dap.ext.vscode').load_launchjs()
+      -- require('dap.ext.vscode').load_launchjs()
 
       local codelldb_root = vim.fn.stdpath 'data' .. '/mason/packages/codelldb/extension'
       local codelldb_path = codelldb_root .. '/adapter/codelldb'
